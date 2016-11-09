@@ -1,4 +1,4 @@
-# lpmi
+# unicoRn
 
 [![Build Status](https://travis-ci.org/cihanerkut/unicoRn.svg?branch=master)](https://travis-ci.org/cihanerkut/unicoRn) [![codecov](https://codecov.io/gh/cihanerkut/unicoRn/branch/master/graph/badge.svg)](https://codecov.io/gh/cihanerkut/unicoRn)
 
