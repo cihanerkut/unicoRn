@@ -1,0 +1,19 @@
+language: r
+cache: packages
+sudo: false
+
+r:
+  - oldrel
+  - release
+  - devel
+
+r_packages:
+  - covr
+  - assertthat
+
+r_github_packages:
+  - hadley/devtools
+  - hadley/testthat
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
