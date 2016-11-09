@@ -115,9 +115,7 @@ read_unicorn <- function(file_name,
 
   file_type <- file_ext(file_name)
 
-  if (file_type == 'asc') {
-    stop('Parsing asc files not yet implemented!')
-  }
+  (file_type == 'asc') && stop('Parsing asc files not yet implemented!')
 
   # Import raw data
   if (verbose) {
@@ -129,8 +127,11 @@ read_unicorn <- function(file_name,
       read_excel(file_name, skip = 2) %>%
       set_colnames(c('Volume', 'A')) %>%
       filter(!is.na(A)) %>%
-      mutate_all(as.numeric) %>%
-      mutate(Sample = sample_names)
+      mutate_all(as.numeric)
+    if (!is.null(sample_names)) {
+      chr_data %<>%
+        mutate(Sample = sample_names)
+    }
   } else {
     chr_data <- read_excel(file_name, skip = 1) %>%
       slice(-1)
@@ -164,8 +165,7 @@ read_unicorn <- function(file_name,
   }
 
   chr_data %<>%
-    ungroup %>%
-    mutate_if(function(x) !is.numeric(x), factor)
+    ungroup
 
   if (verbose) {
     print(summary(chr_data, digits = 3))
