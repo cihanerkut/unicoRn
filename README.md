@@ -1,6 +1,8 @@
 # unicoRn
 
-[![Build Status](https://travis-ci.org/cihanerkut/unicoRn.svg?branch=master)](https://travis-ci.org/cihanerkut/unicoRn) [![codecov](https://codecov.io/gh/cihanerkut/unicoRn/branch/master/graph/badge.svg)](https://codecov.io/gh/cihanerkut/unicoRn)
+[![Build Status](https://travis-ci.org/cihanerkut/unicoRn.svg?branch=master)](https://travis-ci.org/cihanerkut/unicoRn)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/cihanerkut/unicoRn?branch=master&svg=true)](https://ci.appveyor.com/project/cihanerkut/unicoRn)
+[![codecov](https://codecov.io/gh/cihanerkut/unicoRn/branch/master/graph/badge.svg)](https://codecov.io/gh/cihanerkut/unicoRn)
 
 ## Import, analyze and visualize chromatography data from UNICORN software
 
