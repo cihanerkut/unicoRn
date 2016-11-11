@@ -158,10 +158,15 @@ read_unicorn <- function(file_name,
     message('Shifting baseline towards 0')
   }
 
-  if (!hardware_autozero & !single_channel) {
-    chr_data %<>%
-      group_by(Curve, Wavelength) %>%
-      mutate(A_norm = A - A[reference_measurement])
+  if (!hardware_autozero) {
+    if (single_channel) {
+      chr_data %<>%
+        mutate(A_norm = A - A[reference_measurement])
+    } else {
+      chr_data %<>%
+        group_by(Curve, Wavelength) %>%
+        mutate(A_norm = A - A[reference_measurement])
+    }
   }
 
   chr_data %<>%
