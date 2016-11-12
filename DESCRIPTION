@@ -4,11 +4,9 @@ Date: 2016-11-09
 Title: Analyze and visualize chromatography data from UNICORN software
 Version: 0.1.0
 Authors@R: person("Cihan", "Erkut", email = "cihan.erkut@embl.de", role = c("aut", "cre"))
-Description: This package contains functions to import, analyze and visualize
-    data exported by UNICORN software.
-Depends:
-    R(>= 3.2.5)
-License: GPL (>= 2)
+Description: This package contains functions to import, analyze and visualize data exported by UNICORN software.
+Depends: R (>= 3.2.5)
+License: GPL-3 | file LICENSE
 URL: https://github.com/cihanerkut/unicorn
 BugReports: https://github.com/cihanerkut/unicorn/issues
 Encoding: UTF-8
@@ -18,6 +16,6 @@ Imports:
     magrittr (>= 1.5.0),
     tidyr (>= 0.6.0),
     dplyr (>= 0.5.0),
-    assertthat
+    assertthat (>= 0.1)
 RoxygenNote: 5.0.1
 Suggests: testthat
