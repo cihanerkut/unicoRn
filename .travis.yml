@@ -1,19 +1,13 @@
 language: r
 cache: packages
-sudo: false
 
 matrix:
   include:
     - os: linux
       dist: trusty
-      sudo: required
+      sudo: false
+      group: beta
     - os: osx
-      osx_image: xcode8
-
-r:
-  - oldrel
-  - release
-  - devel
 
 r_packages:
   - covr
