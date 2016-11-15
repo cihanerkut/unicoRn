@@ -49,10 +49,10 @@
 #' samples <- data.frame(
 #'     Curve = c("Manual run 10:1", "Manual run 10:5", "Manual run 10:3"),
 #'     Sample = c("Negative control", "Positive control", "Test"))
-#' chr_data <- read_unicorn_excel('Chromatogram.xls', samples)
+#' chr_data <- read_unicorn_excel("Chromatogram.xls", samples)
 #' }
 #'
-#' @importFrom magrittr '%>%' '%<>%' set_colnames
+#' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
 #' @import assertthat
 #' @import dplyr
@@ -76,16 +76,16 @@ read_unicorn <- function(file_name,
     !anyDuplicated(colnames(x))
   }
   on_failure(is_retention_normalized) <- function(call, env) {
-    'Curves must be normalized for retention volume!'
+    "Curves must be normalized for retention volume!"
   }
 
   # Custom assertion for file type
   is_valid_filetype <- function(x) {
     assert_that(is.readable(file_name))
-    has_extension(x, 'xls') | has_extension(x, 'asc')
+    has_extension(x, "xls") | has_extension(x, "asc")
   }
   on_failure(is_valid_filetype) <- function(call, env) {
-    'File extension must be either xls or asc'
+    "File extension must be either xls or asc"
   }
 
   # Validate file type
@@ -95,8 +95,8 @@ read_unicorn <- function(file_name,
   if (!is.null(sample_names)) {
     if (combined) {
       if (is.data.frame(sample_names)) {
-        assert_that(has_name(sample_names, 'Curve'),
-                    has_name(sample_names, 'Sample'))
+        assert_that(has_name(sample_names, "Curve"),
+                    has_name(sample_names, "Sample"))
         sample_names %<>%
           mutate_at(vars(Curve), as.character)
       } else {
@@ -115,17 +115,17 @@ read_unicorn <- function(file_name,
 
   file_type <- file_ext(file_name)
 
-  (file_type == 'asc') && stop('Parsing asc files not yet implemented!')
+  (file_type == "asc") && stop("Parsing asc files not yet implemented!")
 
   # Import raw data
   if (verbose) {
-    message(paste0('Constructing data from ', file_name))
+    message(paste0("Constructing data from ", file_name))
   }
 
   if (single_channel) {
     chr_data <-
       read_excel(file_name, skip = 2) %>%
-      set_colnames(c('Volume', 'A')) %>%
+      set_colnames(c("Volume", "A")) %>%
       filter(!is.na(A)) %>%
       mutate_all(as.numeric)
     if (!is.null(sample_names)) {
@@ -136,16 +136,16 @@ read_unicorn <- function(file_name,
     chr_data <- read_excel(file_name, skip = 1) %>%
       slice(-1)
     assert_that(is_retention_normalized(chr_data))
-    colnames(chr_data)[1] <- 'Volume'
+    colnames(chr_data)[1] <- "Volume"
     chr_data %<>%
       mutate_all(as.numeric) %>%
-      gather(key = 'ID', value = 'A', -Volume) %>%
+      gather(key = "ID", value = "A", -Volume) %>%
       filter(!is.na(A)) %>%
-      separate(ID, c('Curve', 'Channel', 'Wavelength'), sep = '_')
+      separate(ID, c("Curve", "Channel", "Wavelength"), sep = "_")
     if (!is.null(sample_names)) {
       if (is.data.frame(sample_names)) {
         chr_data %<>%
-          left_join(y = sample_names, by = 'Curve')
+          left_join(y = sample_names, by = "Curve")
       } else {
         chr_data %<>%
           mutate(Sample = factor(Curve, labels = unique(sample_names)))
@@ -155,7 +155,7 @@ read_unicorn <- function(file_name,
 
   # Software autozero
   if (verbose) {
-    message('Shifting baseline towards 0')
+    message("Shifting baseline towards 0")
   }
 
   if (!hardware_autozero) {
