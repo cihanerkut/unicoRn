@@ -7,7 +7,7 @@ matrix:
       dist: trusty
       sudo: false
       group: beta
-    - os: osx
+    - os: osx 
 
 r_packages:
   - covr
