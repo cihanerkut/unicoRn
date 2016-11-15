@@ -1,13 +1,11 @@
 language: r
 cache: packages
+sudo: false
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: false
-      group: beta
-    - os: osx 
+r:
+  - oldrel
+  - release
+  - devel
 
 r_packages:
   - covr
