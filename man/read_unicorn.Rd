@@ -67,7 +67,7 @@ operate with one channel at a time.
 samples <- data.frame(
     Curve = c("Manual run 10:1", "Manual run 10:5", "Manual run 10:3"),
     Sample = c("Negative control", "Positive control", "Test"))
-chr_data <- read_unicorn_excel('Chromatogram.xls', samples)
+chr_data <- read_unicorn_excel("Chromatogram.xls", samples)
 }
 
 }
