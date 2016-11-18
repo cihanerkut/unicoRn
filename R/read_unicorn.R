@@ -7,7 +7,7 @@
 #' curve names. However, this is not recommended as the order of the curves may
 #' change or some curves may be excluded at some point during data import. In
 #' the latter case, you will get an error message. The safest way is to define a
-#' data frame with the column names \code{Curve} and \code{Sample}, matching the
+#' data frame with the column names \code{ID} and \code{Sample}, matching the
 #' curve name to the sample name, respectively. When you use it to define sample
 #' names, only those curves that are found in the data will be processed, i.e.
 #' missing curves will be ignored.
@@ -70,7 +70,6 @@ read_unicorn <- function(file_name,
                          hardware_autozero = FALSE,
                          reference_measurement = 1,
                          verbose = FALSE) {
-
   # Custom assertion for normalized retention volume
   is_retention_normalized <- function(x) {
     !anyDuplicated(colnames(x))
@@ -78,7 +77,7 @@ read_unicorn <- function(file_name,
   on_failure(is_retention_normalized) <- function(call, env) {
     "Curves must be normalized for retention volume!"
   }
-
+  
   # Custom assertion for file type
   is_valid_filetype <- function(x) {
     assert_that(is.readable(file_name))
@@ -87,18 +86,18 @@ read_unicorn <- function(file_name,
   on_failure(is_valid_filetype) <- function(call, env) {
     "File extension must be either xls or asc"
   }
-
+  
   # Validate file type
   assert_that(is_valid_filetype(file_name))
-
+  
   # Validate and organize sample_names
   if (!is.null(sample_names)) {
     if (combined) {
       if (is.data.frame(sample_names)) {
-        assert_that(has_name(sample_names, "Curve"),
+        assert_that(has_name(sample_names, "ID"),
                     has_name(sample_names, "Sample"))
         sample_names %<>%
-          mutate_at(vars(Curve), as.character)
+          mutate_at(vars(ID), as.character)
       } else {
         assert_that(is.character(sample_names))
       }
@@ -106,22 +105,25 @@ read_unicorn <- function(file_name,
       assert_that(is.string(sample_names))
     }
   }
-
+  
   # Validate other parameters
-  assert_that(is.flag(hardware_autozero),
-              is.flag(single_channel),
-              is.flag(combined),
-              is.numeric(reference_measurement))
-
+  assert_that(
+    is.flag(hardware_autozero),
+    is.flag(single_channel),
+    is.flag(combined),
+    is.numeric(reference_measurement)
+  )
+  
   file_type <- file_ext(file_name)
-
-  (file_type == "asc") && stop("Parsing asc files not yet implemented!")
-
+  
+  (file_type == "asc") &&
+    stop("Parsing asc files not yet implemented!")
+  
   # Import raw data
   if (verbose) {
     message(paste0("Constructing data from ", file_name))
   }
-
+  
   if (single_channel) {
     chr_data <-
       read_excel(file_name, skip = 2) %>%
@@ -141,40 +143,40 @@ read_unicorn <- function(file_name,
       mutate_all(as.numeric) %>%
       gather(key = "ID", value = "A", -Volume) %>%
       filter(!is.na(A)) %>%
-      separate(ID, c("Curve", "Channel", "Wavelength"), sep = "_")
+      separate(ID, c("ID", "Channel", "Wavelength"), sep = "_")
     if (!is.null(sample_names)) {
       if (is.data.frame(sample_names)) {
         chr_data %<>%
-          left_join(y = sample_names, by = "Curve")
+          left_join(y = sample_names, by = "ID")
       } else {
         chr_data %<>%
-          mutate(Sample = factor(Curve, labels = unique(sample_names)))
+          mutate(Sample = factor(ID, labels = unique(sample_names)))
       }
     }
   }
-
+  
   # Software autozero
   if (verbose) {
     message("Shifting baseline towards 0")
   }
-
+  
   if (!hardware_autozero) {
     if (single_channel) {
       chr_data %<>%
         mutate(A_norm = A - A[reference_measurement])
     } else {
       chr_data %<>%
-        group_by(Curve, Wavelength) %>%
+        group_by(ID, Wavelength) %>%
         mutate(A_norm = A - A[reference_measurement])
     }
   }
-
+  
   chr_data %<>%
     ungroup
-
+  
   if (verbose) {
     print(summary(chr_data, digits = 3))
   }
-
+  
   return(chr_data)
 }

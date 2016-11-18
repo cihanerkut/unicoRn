@@ -43,7 +43,7 @@ If \code{sample_names} is a character vector, a new column named as
 curve names. However, this is not recommended as the order of the curves may
 change or some curves may be excluded at some point during data import. In
 the latter case, you will get an error message. The safest way is to define a
-data frame with the column names \code{Curve} and \code{Sample}, matching the
+data frame with the column names \code{ID} and \code{Sample}, matching the
 curve name to the sample name, respectively. When you use it to define sample
 names, only those curves that are found in the data will be processed, i.e.
 missing curves will be ignored.
