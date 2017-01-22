@@ -70,6 +70,7 @@ read_unicorn <- function(file_name,
                          hardware_autozero = FALSE,
                          reference_measurement = 1,
                          verbose = FALSE) {
+  
   # Custom assertion for normalized retention volume
   is_retention_normalized <- function(x) {
     !anyDuplicated(colnames(x))
