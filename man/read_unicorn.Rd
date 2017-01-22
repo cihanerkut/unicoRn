@@ -71,4 +71,8 @@ chr_data <- read_unicorn_excel("Chromatogram.xls", samples)
 }
 
 }
+\seealso{
+\code{\link{annotate_chromatogram}} for annotating chromatograms
+without sample information, \code{\link{list_IDs}} to see parsed curve names.
+}
 

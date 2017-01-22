@@ -57,7 +57,7 @@ find_peaks <- function(chr_data, ...) {
 
 #' @describeIn find_peaks Find peaks in a single curve. This is the workhorse
 #' function and should not be called without proper filtering.
-
+#' @export
 find_peaks_single <- function(chr_curve,
                               use_norm = TRUE,
                               window_factor = 0.001,

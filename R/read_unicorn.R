@@ -52,6 +52,8 @@
 #' chr_data <- read_unicorn_excel("Chromatogram.xls", samples)
 #' }
 #'
+#' @seealso \code{\link{annotate_chromatogram}} for annotating chromatograms
+#' without sample information, \code{\link{list_IDs}} to see parsed curve names.
 #' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
 #' @import assertthat
@@ -70,6 +72,7 @@ read_unicorn <- function(file_name,
                          hardware_autozero = FALSE,
                          reference_measurement = 1,
                          verbose = FALSE) {
+  
   # Custom assertion for normalized retention volume
   is_retention_normalized <- function(x) {
     !anyDuplicated(colnames(x))
@@ -144,6 +147,7 @@ read_unicorn <- function(file_name,
       gather(key = "ID", value = "A", -Volume) %>%
       filter(!is.na(A)) %>%
       separate(ID, c("ID", "Channel", "Wavelength"), sep = "_")
+    chr_data$ID %<>% factor
     if (!is.null(sample_names)) {
       if (is.data.frame(sample_names)) {
         chr_data %<>%
