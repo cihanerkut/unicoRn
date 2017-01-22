@@ -17,10 +17,11 @@
 #' 
 #' @note This function may overwrite some of the annotation from chromatogram
 #' data if \code{sample_names} was already used during import via \code{read_unicorn}.
+#' all other columns are be added accordingly.
 #' 
 #' @param chr_data Chromatogram data imported via \code{read_unicorn}
 #' @param sample_info Sample information data frame.
-#'
+
 #' @family data annotation functions
 #' @seealso \code{\link{read_unicorn}}
 #' @importFrom magrittr "%<>%" "%>%"
