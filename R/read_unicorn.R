@@ -56,10 +56,10 @@
 #' without sample information, \code{\link{list_IDs}} to see parsed curve names.
 #' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
-#' @import assertthat
-#' @import dplyr
-#' @import tidyr
+#' @importFrom dplyr filter mutate group_by mutate_at mutate_all left_join
+#' @importFrom tidyr gather separate
 #' @importFrom readxl read_excel
+#' @import assertthat
 #' @export
 #'
 
@@ -150,6 +150,7 @@ read_unicorn <- function(file_name,
     chr_data$ID %<>% factor
     if (!is.null(sample_names)) {
       if (is.data.frame(sample_names)) {
+        sample_names$ID %<>% factor
         chr_data %<>%
           left_join(y = sample_names, by = "ID")
       } else {
