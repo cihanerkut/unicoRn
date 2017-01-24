@@ -42,6 +42,8 @@
 #'                     threshold_factor = 0.01)
 #' }
 #'
+#' @importFrom dplyr group_by rowwise bind_rows mutate mutate_at select filter 
+#' arrange top_n distinct vars slice ungroup do rename
 #' @export
 
 find_peaks <- function(chr_data, ...) {
