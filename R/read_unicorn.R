@@ -1,6 +1,6 @@
 #' Import chromatograms
 #'
-#' Read exported UNICORN chromatogram data
+#' Read UNICORN chromatogram data
 #'
 #' If \code{sample_names} is a character vector, a new column named as
 #' \code{Sample} will be appended to the data frame \emph{in the same order} as
@@ -26,8 +26,9 @@
 #' \code{single_channel = TRUE} only when you are sure that the UV detector can
 #' operate with one channel at a time.
 #'
-#' @param file_name The file to be imported. It can be either an Excel file or
-#' an ASC (currently not implemented).
+#' @param file_name The file to be imported. \code{read_unicorn} can import 
+#' either an Excel file or an ASC (currently not implemented). \code{read_res} 
+#' can import a binary RES file (not fully implemented).
 #' @param sample_names A vector or a data frame containing actual sample names
 #' corresponding to curve names
 #' @param combined \code{TRUE} (default) when several spectra are combined
@@ -38,11 +39,14 @@
 #' acquisition. Default is \code{FALSE}.
 #' @param reference_measurement The number of measurement to be used in
 #' baseline subtraction. Ignored when \code{hardware_autozero = TRUE}.
+#' @param smooth Use cubic spline smoothing on sensor data imported from a RES 
+#' file.
 #' @param verbose Display additional progress information. Default is
 #' \code{FALSE}.
 #'
-#' @return A tibble data frame that contains volume, (baselined) absorbance,
-#' wavelength/channel, curve and sample name information for the experiment.
+#' @return A tibble or a data frame that contains volume, (baselined) 
+#' absorbance, wavelength/channel, curve and sample name information for the 
+#' experiment.
 #'
 #' @examples
 #' \dontrun{
@@ -59,7 +63,7 @@
 #' 
 #' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
-#' @importFrom dplyr filter mutate group_by mutate_at mutate_all left_join
+#' @importFrom dplyr filter mutate group_by mutate_at mutate_all left_join combine
 #' @importFrom tidyr gather separate
 #' @importFrom readxl read_excel
 #' @import assertthat
@@ -187,4 +191,95 @@ read_unicorn <- function(file_name,
   }
   
   return(chr_data)
+}
+
+#' @rdname read_unicorn
+#' @export
+read_res <- function(file_name, smooth = TRUE, verbose = FALSE) {
+if (verbose) {
+  message('Parsing .RES file...')
+}
+id1 <- as.raw(c(0x11, 0x47, 0x11, 0x47, 0x18, 0x00, 0x00, 0x00, 0xB0, 0x02, 0x00, 0x00, 0x20, 0x6C, 0x03, 0x00))
+id2 <- charToRaw('UNICORN 3.10')
+id3 = as.raw(c(0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x13))
+
+file_size_external <- file.size(file_name)
+raw_data <- readBin(file_name, raw(), n = file_size_external)
+file_size_internal <- btoi(raw_data, 17)
+stopifnot(grepRaw(id1, raw_data) > 0, 
+          grepRaw(id2, raw_data, offset = 25) > 0, 
+          file_size_internal == file_size_external)
+
+if (verbose) {
+  message('Reading header table...')
+}
+header_end <- grepRaw(id3, raw_data) + 342
+header_table <- data.frame()
+for (i in seq(687, header_end + 342, by = 344)) {
+  data_group <- raw_data[i:(i + 320)]
+  
+  group_id <- paste0(data_group[1:8], collapse = '')
+  group_label <- data_group[9:304]
+  group_label <- rawToChar(group_label[group_label != 0])
+  group_data_size <- btoi(data_group, 305)
+  #group_next_offset <- raw_to_int(data_group, 309)
+  group_data_address <- btoi(data_group, 313)
+  group_data_offset <- btoi(data_group, 317)
+  
+  group_data_start <- group_data_address + group_data_offset
+  group_data_end <- group_data_address + group_data_size
+  
+  header_line <- data.frame(group_id, group_label, group_data_address, group_data_size, group_data_start, group_data_end)
+  header_table <- rbind(header_table, header_line)
+}
+colnames(header_table) <- c('ID', 'Label', 'Data address', 'Data size', 'Start', 'End')
+
+if (verbose) {
+  message('Extracting sensor data...')
+  if (smooth) {
+    message('   Smoothing on')
+  }
+}
+UV_header <- header_table %>% 
+  slice(grep('UV', .$Label)) %>% 
+  mutate(Start = Start + 1) %>%
+  separate(Label, c('Curve', 'Channel', 'Wavelength'), '_', remove = FALSE)
+
+UV_data <- list()
+for (i in 1:nrow(UV_header)) {
+  UV_df <- raw_data[UV_header[i,]$Start:UV_header[i,]$End] %>%
+    rawToBits %>%
+    matrix(ncol = 32, byrow = TRUE) %>%
+    apply(1, function(x, i) packBits(x[i], 'integer')) %>%
+    matrix(ncol = 2, byrow = TRUE) %>%
+    as.data.frame %>%
+    set_colnames(c('Volume', 'A'))
+  
+  UV_df$Volume <- UV_df$Volume / 100
+  UV_df$A <- UV_df$A / 1000
+  
+  if (smooth) {
+    UV_spline <- spline(UV_df$Volume, UV_df$A) %>%
+      data.frame %>%
+      set_colnames(c('Volume', 'A'))
+    UV_data <- combine(UV_data, UV_spline)
+  } else {
+    UV_data <- combine(UV_data, UV_df)
+  }
+}
+
+if (verbose) {
+  message('Reshaping sensor data...')
+}
+UV_data <- data.frame(unique(UV_data)) %>%
+  set_colnames(c('Volume', paste(UV_header$Channel, UV_header$Wavelength, sep = '_'))) %>%
+  gather(key = 'ID', value = 'A', -Volume) %>%
+  separate(ID, c('Channel', 'Wavelength'), '_') %>%
+  mutate(Sample = unique(UV_header$Curve))
+
+return(UV_data)
+}
+
+btoi <- function(raw_data, index) {
+  packBits(rawToBits(raw_data[index:(index + 3)]), type = 'integer')
 }

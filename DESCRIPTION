@@ -13,8 +13,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     readxl (>= 0.1.1),
-    magrittr (>= 1.5.0),
-    tidyr (>= 0.6.0),
+    magrittr (>= 1.5),
+    tidyr (>= 0.6.1),
     dplyr (>= 0.5.0),
     assertthat (>= 0.1)
 RoxygenNote: 5.0.1

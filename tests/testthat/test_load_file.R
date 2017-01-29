@@ -25,3 +25,7 @@ chr_data3 <-
   read_unicorn("micro2.xls", combined = F, single_channel = F)
 
 peaks <- find_peaks(chr_data1)
+
+
+chr_data4 <-
+  read_res("sample.res", verbose = T)
