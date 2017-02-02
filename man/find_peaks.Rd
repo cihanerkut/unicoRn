@@ -60,6 +60,7 @@ top peaks according to absorbance.
 \item \code{find_peaks_single}: Find peaks in a single curve. This is the workhorse
 function and should not be called without proper filtering.
 }}
+
 \examples{
 \dontrun{
 peaks <- find_peaks(chr_data,
@@ -68,4 +69,3 @@ peaks <- find_peaks(chr_data,
 }
 
 }
-

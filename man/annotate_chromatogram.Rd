@@ -2,8 +2,8 @@
 % Please edit documentation in R/annotate_chromatogram.R
 \name{annotate_chromatogram}
 \alias{annotate_chromatogram}
-\alias{create_annotation}
 \alias{list_IDs}
+\alias{create_annotation}
 \title{Annotate chromatograms}
 \usage{
 annotate_chromatogram(chr_data, sample_info)
@@ -66,4 +66,3 @@ annotate_chromatogram(chr_data, sample_info)
 \seealso{
 \code{\link{read_unicorn}}
 }
-
