@@ -38,9 +38,8 @@ baseline subtraction. Ignored when \code{hardware_autozero = TRUE}.}
 file.}
 }
 \value{
-A tibble or a data frame that contains volume, (baselined) 
-absorbance, wavelength/channel, curve and sample name information for the 
-experiment.
+A tibble that contains volume, (baselined) absorbance, 
+wavelength/channel, curve and sample name information for the experiment.
 }
 \description{
 Read UNICORN chromatogram data
@@ -70,6 +69,19 @@ will interfere with data import as well as grouping. Therefore, use
 \code{single_channel = TRUE} only when you are sure that the UV detector can
 operate with one channel at a time.
 }
+\section{Parsing RES files}{
+
+UNICORN has a native, binary file format to store all data acquired during 
+a chromatography run. These files have the extension ".res" and they are 
+stored locally on the computer connected to the HPLC system. The function 
+\code{read_res} is implemented to extract UV cell sensor data directly from 
+a RES file. However, the file format is closed-source. It has been partially 
+reverse engineered and a Python script was written to extract data from a 
+RES file. The \code{read_res} function here is based on those specifications. 
+For more information, please see 
+\href{https://github.com/pyahmed/PyCORN/blob/master/pycorn/docs/RES_files_layout.txt}{this}.
+}
+
 \examples{
 \dontrun{
 samples <- data.frame(
