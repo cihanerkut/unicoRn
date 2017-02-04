@@ -307,7 +307,11 @@ read_res <- function(file_name,
                                    sep = '_'))) %>%
     gather(key = 'ID', value = 'A', -Volume) %>%
     separate(ID, c('Channel', 'Wavelength'), '_') %>%
-    mutate(Sample = unique(UV_header$Curve)) %>%
+    mutate(Sample = unique(UV_header$Curve),
+           Channel = factor(Channel),
+           Wavelength = factor(Wavelength)) %>%
+    group_by(Wavelength) %>%
+    mutate(A_norm = A - min(A)) %>%
     as.tbl
   
   return(UV_data)
