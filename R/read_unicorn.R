@@ -74,7 +74,7 @@
 #' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
 #' @importFrom dplyr filter mutate group_by mutate_at mutate_all left_join 
-#' combine as.tbl
+#' combine as.tbl vars ungroup
 #' @importFrom tidyr gather separate
 #' @importFrom readxl read_excel
 #' @import assertthat
