@@ -9,7 +9,7 @@ read_unicorn(file_name, sample_names = NULL, combined = TRUE,
   single_channel = FALSE, hardware_autozero = FALSE,
   reference_measurement = 1, verbose = FALSE)
 
-read_res(file_name, smooth = TRUE, verbose = FALSE)
+read_res(file_name, smooth = TRUE, smooth_level = 1, verbose = FALSE)
 }
 \arguments{
 \item{file_name}{The file to be imported. \code{read_unicorn} can import 
@@ -36,6 +36,8 @@ baseline subtraction. Ignored when \code{hardware_autozero = TRUE}.}
 
 \item{smooth}{Use cubic spline smoothing on sensor data imported from a RES 
 file.}
+
+\item{smooth_level}{Level of smoothing, default is 1.}
 }
 \value{
 A tibble that contains volume, (baselined) absorbance, 

@@ -52,6 +52,7 @@
 #' baseline subtraction. Ignored when \code{hardware_autozero = TRUE}.
 #' @param smooth Use cubic spline smoothing on sensor data imported from a RES 
 #' file.
+#' @param smooth_level Level of smoothing, default is 1.
 #' @param verbose Display additional progress information. Default is
 #' \code{FALSE}.
 #'
@@ -208,7 +209,8 @@ read_unicorn <- function(file_name,
 #' @rdname read_unicorn
 #' @export
 read_res <- function(file_name, 
-                     smooth = TRUE,  
+                     smooth = TRUE,
+                     smooth_level = 1, 
                      verbose = FALSE) {
   
   # Verify the RES file
@@ -291,7 +293,7 @@ read_res <- function(file_name,
       }
       UV_df <- spline(UV_df$Volume, 
                       UV_df$A, 
-                      n = length(UV_df$A)) %>%
+                      n = length(UV_df$A) * smooth_level) %>%
         data.frame %>%
         set_colnames(c('Volume', 'A'))
     }
