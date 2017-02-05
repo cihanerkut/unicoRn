@@ -73,8 +73,8 @@
 #' 
 #' @importFrom magrittr "%>%" "%<>%" set_colnames
 #' @importFrom tools file_ext
-#' @importFrom dplyr filter mutate group_by mutate_at mutate_all left_join 
-#' combine as.tbl vars ungroup
+#' @importFrom dplyr filter mutate group_by mutate_at mutate_all combine vars
+#' left_join as.tbl ungroup
 #' @importFrom tidyr gather separate
 #' @importFrom readxl read_excel
 #' @importFrom stats spline
@@ -218,7 +218,7 @@ read_res <- function(file_name,
   id1 <- as.raw(c(0x11, 0x47, 0x11, 0x47, 0x18, 0x00, 0x00, 0x00, 0xB0, 0x02, 
                   0x00, 0x00, 0x20, 0x6C, 0x03, 0x00))
   id2 <- charToRaw('UNICORN 3.10')
-  id3 = as.raw(c(0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x13))
+  id3 <- as.raw(c(0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x13))
   
   file_size_external <- file.size(file_name)
   raw_data <- readBin(file_name, raw(), n = file_size_external)
@@ -319,9 +319,10 @@ read_res <- function(file_name,
   
   return(UV_data)
 }
-  
-btoi <- function(raw_data, i) {
-  raw_data[i:(i + 3)] %>%
+
+# Internal function: Convert 4 bytes (raw) to an integer
+btoi <- function(x, i) {
+  x[i:(i + 3)] %>%
     rawToBits %>%
     packBits('int')
 }
