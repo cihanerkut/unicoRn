@@ -2,70 +2,31 @@
 % Please edit documentation in R/find_peaks.R
 \name{find_peaks}
 \alias{find_peaks}
-\alias{find_peaks_single}
 \title{Find peaks}
 \usage{
-find_peaks(chr_data, ...)
-
-find_peaks_single(chr_curve, use_norm = TRUE, window_factor = 0.001,
-  threshold_factor = 0.05, maximum_peaks = 20, verbose = FALSE)
+find_peaks(chr_data, maximum_peaks = 1)
 }
 \arguments{
-\item{chr_data}{Chromatogram data imported by \code{read_unicorn}}
-
-\item{...}{Arguments to be passed to \code{find_peaks_single}.}
-
-\item{chr_curve}{A subset of chromatogram data frame that corresponds to a
-singe curve}
-
-\item{use_norm}{Use baseline-subtracted absorbance (default).}
-
-\item{window_factor}{A coefficient to be used in determining the peak
-search window size. Default is \code{0.001}.}
-
-\item{threshold_factor}{A coefficient to be used in filtering out baseline-
-level peaks (i.e. noise). Default is \code{0.01}.}
+\item{chr_data}{Chromatogram data imported by \code{read_unicorn} or 
+\code{read_res}}
 
 \item{maximum_peaks}{Maximum number of peaks to find.}
-
-\item{verbose}{Prints progress during the run. Default is \code{FALSE}.}
 }
 \description{
 Find local maxima in a chromatogram
 }
 \details{
-This function searches for local maxima along the curves of chromatograms by
-dividing them into smaller windows. It works on a single curve at a time,
-therefore the data are silently grouped before calling the workhorse function
-\code{find_peaks_single}. By default, it works on the baseline-subtracted
-absorbance values (A_norm). Alternatively, raw absorbance values (A) can be
-used by setting \code{use_norm = FALSE}.
+This function searches for local maxima along the curves of chromatograms. 
+Because the search can yield even slightest spikes as peaks, the hits are 
+sorted in a descending order based on the UV absorbance the the top 
+\code{maximum_peaks} (default 1) are reported.
 
-Window size is defined by \code{window_factor}, which is a multiple of
-the total run volume. It determines the sensitivity of the search: A smaller
-window size may result in too many false peaks but it runs faster. A larger
-window size is more robust but it slows down the calculation. The default
-value (\code{0.001}) corresponds to 1/1000th of the total run volume and it
-is a fairly good starting point to search for peaks.
-
-There is a default \code{threshold_factor} of 0.05, which corresponds to
-1/20th of the absorbance range of the curve. This is useful to eliminate
-finding false peaks in the background.
-
-One can also change the \code{maximum_peaks} (default is 20) to find the
-top peaks according to absorbance.
+The algorithm is modified from the \code{findPeaks} function in 
+\href{https://CRAN.R-project.org/package=quantmod}{quantmod} package.
 }
-\section{Functions}{
-\itemize{
-\item \code{find_peaks_single}: Find peaks in a single curve. This is the workhorse
-function and should not be called without proper filtering.
-}}
-
 \examples{
 \dontrun{
-peaks <- find_peaks(chr_data,
-                    window_factor = 0.001,
-                    threshold_factor = 0.01)
+peaks <- find_peaks(chr_data, 5)
 }
 
 }
