@@ -8,7 +8,6 @@ samples <- data.frame(
   Sample = c("SapA", "0:0.20", "25:0", "25:0.10")
 )
 
-
 chr_data1 <- read_unicorn("micro1.xls",
                           samples)
 
@@ -20,12 +19,7 @@ chr_data2 <- read_unicorn(
   combined = F
 )
 
-
 chr_data3 <-
   read_unicorn("micro2.xls", combined = F, single_channel = F)
 
-peaks <- find_peaks(chr_data1, 5)
-
-
-chr_data4 <-
-  read_res("sample.res", verbose = T)
+chr_data4 <- read_res("sample.res", verbose = T)

@@ -285,7 +285,9 @@ read_res <- function(file_name,
              A = A / 1000)
     
     if (smooth) {
-      message(paste0("Smoothing curve ", h$Channel, "..."))
+      if (verbose) {
+        message(paste0("Smoothing curve ", h$Channel, "..."))
+      }
       UV_df <- spline(UV_df$Volume, 
                       UV_df$A, 
                       n = length(UV_df$A)) %>%
