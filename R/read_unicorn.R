@@ -77,6 +77,7 @@
 #' combine as.tbl vars ungroup
 #' @importFrom tidyr gather separate
 #' @importFrom readxl read_excel
+#' @importFrom stats spline
 #' @import assertthat
 
 # TODO: Tests for different combinations, work on combined
