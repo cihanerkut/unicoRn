@@ -241,6 +241,7 @@ read_res <- function(file_name,
     group_id <- paste0(data_group[1:8], collapse = '')
     group_label <- data_group[9:304]
     group_label <- rawToChar(group_label[group_label != 0])
+    group_label <- sub("@", "x_", group_label)
     group_data_size <- btoi(data_group, 305)
     # group_next_offset <- raw_to_int(data_group, 309)
     group_data_address <- btoi(data_group, 313)
@@ -304,14 +305,18 @@ read_res <- function(file_name,
   if (verbose) {
     message('Reshaping sensor data...')
   }
+
   UV_data %<>% 
     unique %>%
-    data.frame %>%
-    set_colnames(c('Volume', paste(UV_header$Channel, 
-                                   UV_header$Wavelength, 
-                                   sep = '_'))) %>%
+    lapply("length<-", max(lengths(.))) %>%
+    do.call(cbind, .) %>%
+    as.data.frame %>%
+    set_colnames(c('Volume', paste(UV_header$Channel,
+                                   UV_header$Wavelength,
+                                   sep = "_"))) %>%
     gather(key = 'ID', value = 'A', -Volume) %>%
-    separate(ID, c('Channel', 'Wavelength'), '_') %>%
+    separate(ID, c('Channel', 'Wavelength'), "_") %>%
+    filter(Channel != "UVx") %>%
     mutate(Sample = unique(UV_header$Curve),
            Channel = factor(Channel),
            Wavelength = factor(Wavelength)) %>%
